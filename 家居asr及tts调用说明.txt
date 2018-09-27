@@ -119,3 +119,5 @@ params :
                 "base64Text":"tts音频内容" // base64字符串(转换为音频的wav格式)
             }
         }
+
+测试用openId e48168ad|3567c789|978039090337
