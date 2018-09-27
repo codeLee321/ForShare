@@ -1,0 +1,121 @@
+asr(语音)调用接口
+url : http://www.sonnhe.com/speech/api/voice/asr/furniture/
+method : post
+params : (enctype="multipart/form-data")
+    file : 需要上传的语音文件
+    openId : 认证ID
+params : (base64方式)
+    text : 音频文件转换后的base64字符串(utf8)
+    openId : 认证ID
+    isBase64 : true
+音频文件说明 ：
+    音频文件为16k 16bit
+openId 说明 :
+用户ID|(分割符)用户产品ID|设备或C端用户ID(唯一值)
+如 ： e46168ac|3416c761|7ccedbf457db7c00
+前两个值照上面的填写即可 最后一个值需要获得设备的唯一标识(不要包含特殊字符)
+
+回传（json）:
+    失败 :
+        设备不合法: (openId验证失败)
+            {
+                "code":510,
+                "message":"您的设备不合法",
+                "type":0,
+                "data":null
+            }
+        服务器内部错误:
+            {
+                "code":500,
+                "message":"服务器内部错误",
+                "type":0,
+                "data":null
+            }
+    成功 : (code:200)
+         语义未识别:
+             {
+                 "code":200,
+                 "message":"success",
+                 "type":1,
+                 "data":{
+                     "code":500,
+                     "text":"用户说的话",// asr解析后结果
+                     "tts":"我还太小，没有明白您的意思！",// tts结果
+                     "autoRecord":false,
+                     "domain":"error",
+                     "flag":0,
+                     "time":1535423794628 // 时间戳
+                 }
+             }
+         智能家居控制:
+             {
+                 "code":200,
+                 "message":"success",
+                 "type":1,
+                 "data": {
+                    "code":0,
+                    "text":"打开走廊的灯光",// asr解析后结果
+                    "tts":"即将为您打开走廊灯光",// tts结果
+                    "autoRecord":false,
+                    "domain":"LIGHT",
+                    "flag":0,
+                    "result":{
+                        "tts":"即将为您打开走廊灯光",// 与上面的相同
+                        "flag":1,
+                        "description":"打开灯光", // 中文指令，错误时返回错误信息
+                        "attributes":[ // 各种指令信息，错误时无返回
+                            {
+                                "attrname":"effective_length",
+                                "value":"7.0"
+                            },
+                            {
+                                "attrname":"light",
+                                "value":"灯光"
+                            },
+                            {
+                                "attrname":"action",
+                                "value":"open"
+                            },
+                            {
+                                "attrname":"ruleName",
+                                "value":"LIGHTopen_light"
+                            },
+                            {
+                                "attrname":"location",
+                                "value":"room"
+                            },
+                            {
+                                "attrname":"device",
+                                "value":"light"
+                            },
+                            {
+                                "attrname":"open",
+                                "value":"打开"
+                            },
+                            {
+                                "attrname":"room",
+                                "value":"走廊"
+                            }
+                        ]
+                    }
+                 }
+             }
+tts调用接口
+url : http://www.sonnhe.com/speech/api/voice/tts/
+method : post
+params :
+    text : 需要播放的语音文本
+    openId : 认证ID(同上)
+回传(json) :
+    失败 : 同上
+    成功 : (code:200)
+        {
+            "code":200,
+            "message":"success",
+            "type":0,
+            "data": {
+                "path":"服务器中的文件路径",// 暂时忽略
+                "text":"tts播报的文本内容",
+                "base64Text":"tts音频内容" // base64字符串(转换为音频的wav格式)
+            }
+        }
